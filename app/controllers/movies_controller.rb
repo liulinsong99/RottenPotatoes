@@ -7,9 +7,14 @@ class MoviesController < ApplicationController
     # will render app/views/movies/show.<extension> by default
   end
 
-  def api
+  def api(params)
     logger.info "****Print on api****"
-    logger.info params
+    logger.info params[:ratings]
+
+    if params['ratings'] == nil and params['sorting'] == nil
+      redirect_to movies_path
+      return
+    end
 
     if params['ratings'] == nil
       session['ratings_to_show'] = @all_ratings
@@ -27,8 +32,8 @@ class MoviesController < ApplicationController
     logger.info params
     @all_ratings = ['G','PG','PG-13','R']
 
-    if params['ratings'] != nil or params['sorting'] != nil
-      redirect_to(movies_api_path({'ratings': params['ratings'], 'sorting': params['sorting']}))
+    if params != {"controller"=>"movies", "action"=>"index"}
+      api(params)
     end
 
     if session['ratings_to_show'] == nil
