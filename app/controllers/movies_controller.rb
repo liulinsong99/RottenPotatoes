@@ -10,22 +10,13 @@ class MoviesController < ApplicationController
   def api
     logger.info "****Print on api****"
 
-    logger.info session
-    if params['commit'] == 'Refresh' and params['ratings'] == nil
-    session['ratings_to_show'] = @all_ratings
-    elsif params['commit'] == 'Refresh' and params['ratings'].keys != nil
-      session['ratings_to_show'] = params['ratings'].keys
-    elsif session['ratings_to_show'] == nil
+    if params['ratings'] == nil
       session['ratings_to_show'] = @all_ratings
+    else
+      session['ratings_to_show'] = params['ratings'].keys
     end
 
-    if params['sorting'] == 'title'
-      session['sorting'] = 'title'
-    elsif params['sorting'] == 'date'
-      session['sorting'] = 'date'
-    elsif session['sorting'] == nil or session['sorting'] == ''
-      session['sorting'] = ''
-    end
+    session['sorting'] = params['sorting']
 
     redirect_to movies_path
   end
@@ -33,9 +24,15 @@ class MoviesController < ApplicationController
   def index
     logger.info "****Print on index****"
     @all_ratings = ['G','PG','PG-13','R']
-    
-    @ratings_to_show = session['ratings_to_show']
 
+    if session['ratings_to_show'] == nil
+      session['ratings_to_show'] = @all_ratings
+    end
+    @ratings_to_show = session['ratings_to_show']
+    
+    if session['sorting'] == nil
+      session['sorting'] = nil
+    end
     @sorting = session['sorting']
 
     @movies = Movie.with_ratings(@ratings_to_show, @sorting)
