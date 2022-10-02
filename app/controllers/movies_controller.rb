@@ -9,22 +9,19 @@ class MoviesController < ApplicationController
 
   def api(params)
     logger.info "****Print on api****"
-    logger.info params[:ratings]
+    logger.info params['ratings']
 
     if params['ratings'] == nil and params['sorting'] == nil
-      redirect_to movies_path
       return
     end
 
     if params['ratings'] == nil
-      session['ratings_to_show'] = @all_ratings
+      session['ratings'] = @all_ratings
     else
-      session['ratings_to_show'] = params['ratings'].keys
+      session['ratings'] = params['ratings'].keys
     end
 
     session['sorting'] = params['sorting']
-
-    redirect_to movies_path
   end
 
   def index
@@ -36,15 +33,31 @@ class MoviesController < ApplicationController
       api(params)
     end
 
-    if session['ratings_to_show'] == nil
-      session['ratings_to_show'] = @all_ratings
+    if session['ratings'] == nil
+      session['ratings'] = @all_ratings
     end
-    @ratings_to_show = session['ratings_to_show']
+    @ratings_to_show = session['ratings']
     
     if session['sorting'] == nil
       session['sorting'] = nil
     end
     @sorting = session['sorting']
+
+
+    if params['ratings'] == nil and params['sorting'] == nil
+      new_params = {}
+      new_params['ratings'] = Hash[@ratings_to_show.map {|rating| [rating,'1']}]
+  
+      if @sorting != nil
+        new_params['sorting'] = @sorting
+      end
+      logger.info new_params
+
+      redirect_to movies_path(new_params)
+      return
+
+    end
+
 
     @movies = Movie.with_ratings(@ratings_to_show, @sorting)
   end
