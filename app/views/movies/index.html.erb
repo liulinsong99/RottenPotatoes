@@ -3,7 +3,7 @@
 
 <%#  Part 1: Start here... %>
 
-<%= form_tag movies_path, method: :get, id: 'ratings_form' do %>
+<%= form_tag movies_api_path, method: :get, id: 'ratings_form' do %>
   Include:
   <% @all_ratings.each do |rating| %>
     <div class="form-check  form-check-inline">
@@ -19,11 +19,11 @@
   <thead>
     <tr>
       <th class="<%= "hilite bg-warning" if @sorting == "title" %>">
-        <%= link_to "Movie Title", movies_path({'sorting': 'title', 'ratings': Hash[@ratings_to_show.map {|rating| [rating,'1']}] }), id: "title_header" %>
+        <%= link_to "Movie Title", movies_api_path({'sorting': 'title', 'ratings': Hash[@ratings_to_show.map {|rating| [rating,'1']}] }), id: "title_header" %>
       </th>
       <th>Rating</th>
       <th class="<%= "hilite bg-warning" if @sorting == "date" %>">
-        <%= link_to "Release Date", movies_path({'sorting': 'date', 'ratings': Hash[@ratings_to_show.map {|rating| [rating,'1']}] }), id: "release_date_header" %>
+        <%= link_to "Release Date", movies_api_path({'sorting': 'date', 'ratings': Hash[@ratings_to_show.map {|rating| [rating,'1']}] }), id: "release_date_header" %>
       </th>
       <th>More Info</th>
     </tr>

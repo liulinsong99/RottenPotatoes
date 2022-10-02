@@ -7,9 +7,8 @@ class MoviesController < ApplicationController
     # will render app/views/movies/show.<extension> by default
   end
 
-  def index
-    logger.info "****Print on index****"
-    @all_ratings = ['G','PG','PG-13','R']
+  def api
+    logger.info "****Print on api****"
 
     logger.info session
     if params['commit'] == 'Refresh' and params['ratings'] == nil
@@ -19,10 +18,7 @@ class MoviesController < ApplicationController
     elsif session['ratings_to_show'] == nil
       session['ratings_to_show'] = @all_ratings
     end
-    
-    @ratings_to_show = session['ratings_to_show']
 
-    
     if params['sorting'] == 'title'
       session['sorting'] = 'title'
     elsif params['sorting'] == 'date'
@@ -31,14 +27,18 @@ class MoviesController < ApplicationController
       session['sorting'] = ''
     end
 
+    redirect_to movies_path
+  end
+
+  def index
+    logger.info "****Print on index****"
+    @all_ratings = ['G','PG','PG-13','R']
+    
+    @ratings_to_show = session['ratings_to_show']
+
     @sorting = session['sorting']
 
-    logger.info params
-
     @movies = Movie.with_ratings(@ratings_to_show, @sorting)
-    if params != {"controller"=>"movies", "action"=>"index"}
-      redirect_to movies_path
-    end
   end
 
   def new
