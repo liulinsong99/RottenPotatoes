@@ -10,19 +10,28 @@ class MoviesController < ApplicationController
   def index
     logger.info "****Print on index****"
     @all_ratings = ['G','PG','PG-13','R']
-    if params['ratings'] == nil
-      @ratings_to_show = []
-    else
-      @ratings_to_show = params['ratings'].keys
+
+    logger.info session
+    if params['commit'] == 'Refresh' and params['ratings'] == nil
+    session['ratings_to_show'] = []
+    elsif params['commit'] == 'Refresh' and params['ratings'].keys != nil
+      session['ratings_to_show'] = params['ratings'].keys
+    elsif session['ratings_to_show'] == nil
+      session['ratings_to_show'] = []
     end
     
+    @ratings_to_show = session['ratings_to_show']
+
+    
     if params['sorting'] == 'title'
-      @sorting = 'title'
+      session['sorting'] = 'title'
     elsif params['sorting'] == 'date'
-      @sorting = 'date'
-    else
-      @sorting = nil
+      session['sorting'] = 'date'
+    elsif session['sorting'] == nil
+      session['sorting'] = ''
     end
+
+    @sorting = session['sorting']
 
     logger.info @ratings_to_show
     logger.info @sorting
