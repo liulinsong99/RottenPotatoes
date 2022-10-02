@@ -15,9 +15,19 @@ class MoviesController < ApplicationController
     else
       @ratings_to_show = params['ratings'].keys
     end
+    
+    if params['sorting'] == 'title'
+      @sorting = 'title'
+    elsif params['sorting'] == 'date'
+      @sorting = 'date'
+    else
+      @sorting = nil
+    end
 
     logger.info @ratings_to_show
-    @movies = Movie.with_ratings(@ratings_to_show)
+    logger.info @sorting
+
+    @movies = Movie.with_ratings(@ratings_to_show, @sorting)
   end
 
   def new
