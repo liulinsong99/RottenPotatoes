@@ -9,6 +9,7 @@ class MoviesController < ApplicationController
 
   def api
     logger.info "****Print on api****"
+    logger.info params
 
     if params['ratings'] == nil
       session['ratings_to_show'] = @all_ratings
@@ -23,7 +24,12 @@ class MoviesController < ApplicationController
 
   def index
     logger.info "****Print on index****"
+    logger.info params
     @all_ratings = ['G','PG','PG-13','R']
+
+    if params['ratings'] != nil or params['sorting'] != nil
+      redirect_to(movies_api_path({'ratings': params['ratings'], 'sorting': params['sorting']}))
+    end
 
     if session['ratings_to_show'] == nil
       session['ratings_to_show'] = @all_ratings
