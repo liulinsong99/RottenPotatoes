@@ -13,11 +13,11 @@ class MoviesController < ApplicationController
 
     logger.info session
     if params['commit'] == 'Refresh' and params['ratings'] == nil
-    session['ratings_to_show'] = []
+    session['ratings_to_show'] = @all_ratings
     elsif params['commit'] == 'Refresh' and params['ratings'].keys != nil
       session['ratings_to_show'] = params['ratings'].keys
     elsif session['ratings_to_show'] == nil
-      session['ratings_to_show'] = []
+      session['ratings_to_show'] = @all_ratings
     end
     
     @ratings_to_show = session['ratings_to_show']
@@ -27,16 +27,18 @@ class MoviesController < ApplicationController
       session['sorting'] = 'title'
     elsif params['sorting'] == 'date'
       session['sorting'] = 'date'
-    elsif session['sorting'] == nil
+    elsif session['sorting'] == nil or session['sorting'] == ''
       session['sorting'] = ''
     end
 
     @sorting = session['sorting']
 
-    logger.info @ratings_to_show
-    logger.info @sorting
+    logger.info params
 
     @movies = Movie.with_ratings(@ratings_to_show, @sorting)
+    if params != {"controller"=>"movies", "action"=>"index"}
+      redirect_to movies_path
+    end
   end
 
   def new
